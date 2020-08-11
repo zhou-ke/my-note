@@ -1,0 +1,75 @@
+# 基数排序
+
+## 一、基本思想
+最低位优先法，LSD（Least Significant Digital）—— 先从最低位开始排序，再对次低位排序，直到对最高位排序后得到一个有序序列（位数不同时高位补 0）。
+
+## 二、举例分析
+
+假设有一串数列：73, 22, 93, 43, 55, 14, 28, 65, 39, 81。排序过程如下：
+
+（1）先根据个位进行排序，得到：
+0——
+1——81
+2——22
+3——73，93，43
+4——14
+5——55，65
+6——
+7——
+8——28
+9——39
+
+（2）将按个位排序的结果整理得到新数列：81, 22, 73, 93, 43, 14, 55, 65, 28, 39。再根据十位进行排序，得到：
+0——
+1——14
+2——22，28
+3——39
+4——43
+5——55
+6——65
+7——73
+8——81
+9——93
+
+（3）将按十位排序的结果整理得到新数列：14, 22, 28, 39, 43, 55, 65, 73, 81, 93。这时数列已经有序。若数列中有三位数以上，则再根据百位进行排序，以此类推，直至最高位为止。
+
+## 三、代码实现
+
+```java
+public int[] radixSort(int[] sourceArray){
+	// 复制数组
+	int[] array = Arrays.copyOf(sourceArray, sourceArray.length);
+	// 找数组中的最大值
+	int maxValue = array[0];
+	for (int i = 1; i < array.length; i++) {
+		if(maxValue < array[i])
+			maxValue = array[i];
+	}
+	// 最大值的位数
+	double d = Math.pow(10, String.valueOf(maxValue).length());
+		
+	int k = 1;
+	int[][] t = new int[10][array.length];// 桶，0~9共十位，创建十个桶；
+	int[] num = new int[10];// 记录每个桶中存入数的个数
+	while(k < d){
+		// 按位存入桶中：k = 1时，按个位；k = 10时，按十位……
+		for(int a : array){
+			int m = (a / k) % 10;
+			t[m][num[m]] = a;
+			num[m]++;
+		}
+		// 从桶中取出放回array。k=1时，是按个位排序的结果；k=10时，是按十位排序的结果……
+		int c = 0;
+		for (int i = 0; i < 10; i++) {
+			if(num[i] != 0){
+				for (int j = 0; j < num[i]; j++) {
+					array[c++] = t[i][j];
+				}
+			}
+			num[i] = 0;
+		}
+		k = k * 10;
+	}
+	return array;	
+}
+```
