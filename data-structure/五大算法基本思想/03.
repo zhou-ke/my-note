@@ -1,0 +1,117 @@
+# 穷举法
+
+## 1. 算法思想
+
+穷举算法，依赖计算机强大的计算能力，来穷举每一种可能的情况，以达到解决问题的目的，也叫枚举法、暴力破解法。
+
+**基本思想：** 逐一列举问题所涉及的所有情形，并根据问题提出的条件进行检验从而找到可能的解 。
+
+**方法步骤：** 确定枚举对象、枚举范围、判断条件；循环验证每一个解。
+
+## 2. 案例一——队伍名次
+甲 、乙、丙 三位球迷分别预测进入半决赛的四队A、B、C、D的名次如下： 
+甲：A 第一名 、B 第二名 
+乙：C 第一名 、D 第三名 
+丙：D第一名 、 A 第三名 
+设比赛结果，四队互不相同，并且甲乙丙的预测各对一半，求A、B、C、D队的名次？
+
+令变量 a，b，c，d 分别为四个名次。甲乙丙的预测各对一半，即两个预测结果只有一个成立。以甲的预测为例，即（a == 1）&&（b != 2）|| （a != 1）&&（b == 2）。
+
+**代码如下：**
+
+```java
+public class teamRanking {
+	
+	public static void main(String[] args) {
+		int a, b, c, d;
+		boolean t;
+		// 循环，列出所有的可能
+		for (a = 1; a <= 4; a++) {
+			for (b = 1; b <= 4; b++) {
+				if(a == b)// 如果两队名次相同，跳出本次循环
+					continue;
+				for (c = 0; c <= 4; c++) {
+					if(c == a || c == b)// 如果两队名次相同，跳出本次循环
+						continue;
+					d = 10 - a - b -c;// 四个队，名次之和为10
+					// 甲乙丙的预测
+					t = (a == 1 && b != 2 || a != 1 && b == 2) &&
+						(c == 1 && d != 3 || c != 1 && d == 3) && 
+						(d == 1 && a != 3 || d != 1 && a == 3);
+					if(t){
+						System.out.println("四队的名次为：");
+						System.out.println("A=" + a + ", B=" + b +
+								", C=" + c  + ", D=" + d);
+					}
+				}
+			}
+		}
+	}
+
+}
+```
+**测试结果：**
+
+	四队的名次为：
+	A=3, B=2, C=1, D=4
+
+### 案例二——鸡兔同笼
+问题：一个笼子有35个头，94只脚，问鸡和兔各有多少？
+
+分析：设有鸡 x 只，兔 y 只，则有 x + y = 35 和 2x + 4y = 94。由 x + y = 35 可知 x、y 的定义域分别为 $x \in [0,35],y \in[0,35]$。
+
+可以直接以两个定义域建立循环进行计算，但 y 的定义域可以进行优化缩小。假设笼中全是兔子，则最多有 $94 \div 4 = 23$ 只，所以可将 y 优化为 $y \in[0,23]$。
+
+**代码如下：**
+
+```java
+public class chickenAndRabbit {
+
+	public static void main(String[] args) {
+		for (int x = 0; x <= 35; x++) {
+			for (int y = 0; y <= 23; y++) {
+				if (x + y == 35 && 2 * x + 4 * y == 94)
+					System.out.println("x = " + x + ", y = " + y);
+			}
+		}
+	}
+
+}
+```
+**测试结果：**
+
+	x = 23, y = 12
+
+### 案例三——水仙花数
+水仙花数（Narcissistic number）是指一个三位数，其各位数字的立方和等于其本身。例如，$153 = 1^3 + 5^3 + 3^3$，所以 153 就是一个水仙花数。
+
+使用穷举法，遍历 100 ~ 999 所有的三位数，用水仙花数的条件进行判断，从而选出水仙花数。
+
+**代码如下：**
+
+```java
+public class narcissisticNumber {
+	
+	public static void main(String[] args) {
+		int number;
+		int sum = 0;
+		int i, j, k; // i j k 分别表示 number 的百位、十位、个位
+		for (number = 100; number < 1000; number++) {
+			i = number / 100;
+			j = (number - i * 100) / 10;
+			k = number - i * 100 - j * 10;
+			sum = i * i * i + j * j * j + k * k * k;
+			if (sum == number)
+				System.out.println(number + " is a narcissistic number! ");
+		}
+	}
+
+}
+```
+**测试结果：**
+
+	153 is a narcissistic number! 
+	370 is a narcissistic number! 
+	371 is a narcissistic number! 
+	407 is a narcissistic number! 
+	
